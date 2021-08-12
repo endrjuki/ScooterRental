@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 
 namespace ScooterRental
 {
-    public class ScooterRentalCompany : IRentalCompany, IScooterService
+    public class ScooterRentalCompany : IRentalCompany
     {
         private string _name;
-        private List<Scooter> _fleet;
+        private Dictionary<string, DateTime> _rentalLog;
         public string Name => _name;
 
         public ScooterRentalCompany(string name)
@@ -17,8 +18,18 @@ namespace ScooterRental
         {
             throw new System.NotImplementedException();
         }
+        
+        public void StartRent(string id, DateTime timeNow)
+        {
+            throw new System.NotImplementedException();
+        }
 
         public decimal EndRent(string id)
+        {
+            throw new System.NotImplementedException();
+        }
+        
+        public decimal EndRent(string id, DateTime timeNow)
         {
             throw new System.NotImplementedException();
         }
@@ -28,24 +39,10 @@ namespace ScooterRental
             throw new System.NotImplementedException();
         }
 
-        public void AddScooter(string id, decimal pricePerMinute)
-        {
-            throw new System.NotImplementedException();
-        }
+        
 
-        public void RemoveScooter(string id)
-        {
-            throw new System.NotImplementedException();
-        }
+        
 
-        public IList<Scooter> GetScooters()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Scooter GetScooterById(string scooterId)
-        {
-            throw new System.NotImplementedException();
-        }
+        
     }
 }
