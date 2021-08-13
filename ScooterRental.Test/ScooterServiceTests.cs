@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ScooterRental.Exceptions;
 using Xunit;
 
 namespace ScooterRental.Test
@@ -56,7 +57,7 @@ namespace ScooterRental.Test
             _testScooterService.GetScooterById(id).IsRented = true;
             Action act = () => _testScooterService.RemoveScooter(id);
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            RentInProgressException exception = Assert.Throws<RentInProgressException>(act);
             Assert.Equal("Scooter with this ID is being currently rented.", exception.Message);
         }
 
@@ -67,7 +68,7 @@ namespace ScooterRental.Test
 
             Action act = () => _testScooterService.RemoveScooter(id);
             
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            ScooterDoesntExistException exception = Assert.Throws<ScooterDoesntExistException>(act);
             Assert.Equal("ID does not exist in fleet", exception.Message);
         }
 
@@ -113,7 +114,7 @@ namespace ScooterRental.Test
 
             Action act = () => _testScooterService.GetScooterById(id);
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            ScooterDoesntExistException exception = Assert.Throws<ScooterDoesntExistException>(act);
             Assert.Equal("ID does not exist in fleet", exception.Message);
         }
     }
