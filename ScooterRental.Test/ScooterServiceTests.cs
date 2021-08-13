@@ -47,7 +47,7 @@ namespace ScooterRental.Test
         }
         
        [Fact]
-        public void RemoveScooter_ScooterWithIdIsRented_ArgumentError()
+        public void RemoveScooter_ScooterWithIdIsRented_RentInProgressException()
      
         {
             string id = "testScooter";
@@ -62,7 +62,7 @@ namespace ScooterRental.Test
         }
 
         [Fact]
-        public void RemoveScooter_ScooterDoesntExist_ArgumentError()
+        public void RemoveScooter_ScooterDoesntExist_ScooterDoesntExist()
         {
             string id = "testScooter";
 
@@ -79,17 +79,12 @@ namespace ScooterRental.Test
             string id2 = "testScooter2";
             string id3 = "testScooter3";
             decimal pricePerMinute = 0.20m;
-            var expected = new List<Scooter>()
-            {
-                new Scooter(id1, pricePerMinute),
-                new Scooter(id2, pricePerMinute),
-                new Scooter(id3, pricePerMinute)
-            };
+            var expected = 3;
             
             _testScooterService.AddScooter(id1, pricePerMinute);
             _testScooterService.AddScooter(id2, pricePerMinute);
             _testScooterService.AddScooter(id3, pricePerMinute);
-            List<Scooter> actual = _testScooterService.GetScooters().ToList();
+            int actual = _testScooterService.GetScooters().Count;
 
             Assert.Equal(expected, actual);
         }
@@ -104,11 +99,13 @@ namespace ScooterRental.Test
             _testScooterService.AddScooter(id, pricePerMinute);
             var actual = _testScooterService.GetScooterById(id);
             
-            Assert.Equal(expected, actual);
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.IsRented, actual.IsRented);
+            Assert.Equal(expected.PricePerMinute, actual.PricePerMinute);
         }
 
         [Fact]
-        public void GetScooterById_InvalidId_ArgumentException()
+        public void GetScooterById_InvalidId_ScooterDoesntExist()
         {
             string id = "testScooter";
 
