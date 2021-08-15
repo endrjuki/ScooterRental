@@ -3,10 +3,12 @@ using System.Collections.Generic;
 
 namespace ScooterRental
 {
-    public class ScooterRentalCompany : IRentalCompany
+    public class ScooterRentalCompany : IRentalCompany, ITimeService
     {
         private string _name;
-        private Dictionary<string, DateTime> _rentalLog;
+        private IScooterService _fleet;
+        private IRentalService _rentalService;
+        private ITimeService _time;
         public string Name => _name;
 
         public ScooterRentalCompany(string name)
@@ -18,18 +20,8 @@ namespace ScooterRental
         {
             throw new System.NotImplementedException();
         }
-        
-        public void StartRent(string id, DateTime timeNow)
-        {
-            throw new System.NotImplementedException();
-        }
 
         public decimal EndRent(string id)
-        {
-            throw new System.NotImplementedException();
-        }
-        
-        public decimal EndRent(string id, DateTime timeNow)
         {
             throw new System.NotImplementedException();
         }
@@ -38,11 +30,9 @@ namespace ScooterRental
         {
             throw new System.NotImplementedException();
         }
-
-        
-
-        
-
-        
+        public DateTime Now(DateTime time)
+        {
+            return DateTime.Now;
+        }
     }
 }
