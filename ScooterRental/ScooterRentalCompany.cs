@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
 
 namespace ScooterRental
 {
-    public class ScooterRentalCompany : IRentalCompany, IScooterService
+    public class ScooterRentalCompany : IRentalCompany, ITimeService
     {
         private string _name;
-        private List<Scooter> _fleet;
+        private IScooterService _fleet;
+        private IRentalService _rentalService;
+        private ITimeService _time;
         public string Name => _name;
 
         public ScooterRentalCompany(string name)
@@ -27,25 +30,9 @@ namespace ScooterRental
         {
             throw new System.NotImplementedException();
         }
-
-        public void AddScooter(string id, decimal pricePerMinute)
+        public DateTime Now(DateTime time)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveScooter(string id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IList<Scooter> GetScooters()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Scooter GetScooterById(string scooterId)
-        {
-            throw new System.NotImplementedException();
+            return DateTime.Now;
         }
     }
 }
