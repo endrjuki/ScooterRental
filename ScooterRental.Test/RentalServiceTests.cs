@@ -8,12 +8,12 @@ namespace ScooterRental.Test
 {
     public class RentalServiceTests
     {
-        private RentalService _testService;
+        private RentalService _sut;
         private Scooter _testScooter;
 
         public RentalServiceTests()
         {
-            _testService = new RentalService();
+            _sut = new RentalService();
             _testScooter = new Scooter("testName", 0.20m);
         }
 
@@ -23,9 +23,9 @@ namespace ScooterRental.Test
             var testTimeNow = new DateTime(2021, 8, 13, 0, 0, 0);
             var expectedRentalCount = 1;
 
-            _testService.RentScooter(_testScooter, testTimeNow);
-            var actualRentalCount = _testService.CurrentActiveRentals().Count;
-            var actualRentalScooter = _testService.CurrentActiveRentals()[0];
+            _sut.RentScooter(_testScooter, testTimeNow);
+            var actualRentalCount = _sut.CurrentActiveRentals().Count;
+            var actualRentalScooter = _sut.CurrentActiveRentals()[0];
             var actualId = actualRentalScooter.Id;
             var actualPpm = actualRentalScooter.PricePerMinute;
             var actualRentStartTime = actualRentalScooter.StartTime;
@@ -43,7 +43,7 @@ namespace ScooterRental.Test
             _testScooter.IsRented = true;
             var expectedMessage = "Scooter with this ID is being currently rented.";
 
-            Action act = () => _testService.RentScooter(_testScooter, testTimeNow);
+            Action act = () => _sut.RentScooter(_testScooter, testTimeNow);
 
             RentInProgressException exception = Assert.Throws<RentInProgressException>(act);
             Assert.Equal(exception.Message, expectedMessage);
@@ -55,7 +55,7 @@ namespace ScooterRental.Test
             var testTimeNow = new DateTime(2021, 8, 13, 0, 0, 0);
             var expectedMessage = "Rental entry with this ID doesn't exist";
 
-            Action act = () => _testService.ReturnScooter(_testScooter, testTimeNow);
+            Action act = () => _sut.ReturnScooter(_testScooter, testTimeNow);
 
             RentalEntryDoesntExistException exception = Assert.Throws<RentalEntryDoesntExistException>(act);
             Assert.Equal(exception.Message, expectedMessage);
@@ -68,11 +68,11 @@ namespace ScooterRental.Test
             var rentalStartTime = new DateTime(rentalYear, 8, 13, 0, 0, 0);
             var rentalEndTime = new DateTime(rentalYear, 8, 13, 2, 0, 0);
             var expectedRentalHistoryCount = 1;
-            _testService.RentScooter(_testScooter, rentalStartTime);
+            _sut.RentScooter(_testScooter, rentalStartTime);
 
-            _testService.ReturnScooter(_testScooter, rentalEndTime);
-            var actualRentalHistoryCount = _testService.RentalHistory(rentalYear).Count;
-            var actualRentalTime = _testService.RentalHistory(rentalYear)[0];
+            _sut.ReturnScooter(_testScooter, rentalEndTime);
+            var actualRentalHistoryCount = _sut.RentalHistory(rentalYear).Count;
+            var actualRentalTime = _sut.RentalHistory(rentalYear)[0];
             var actualId = actualRentalTime.Id;
             var actualStartTime = actualRentalTime.StartTime;
             var actualEndTime = actualRentalTime.EndTime;
@@ -95,13 +95,13 @@ namespace ScooterRental.Test
             var timeDelta = new TimeSpan(0, 40, 0);
             var expectedScooterCount = 3;
 
-            _testService.RentScooter(_testScooter, timeYear1);
-            _testService.ReturnScooter(_testScooter, timeYear1 + timeDelta);
-            _testService.RentScooter(_testScooter, timeYear2);
-            _testService.ReturnScooter(_testScooter, timeYear2 + timeDelta);
-            _testService.RentScooter(_testScooter, timeYear3);
-            _testService.ReturnScooter(_testScooter, timeYear3 + timeDelta);
-            var actualScooterCount = _testService.RentalHistory(null).Count;
+            _sut.RentScooter(_testScooter, timeYear1);
+            _sut.ReturnScooter(_testScooter, timeYear1 + timeDelta);
+            _sut.RentScooter(_testScooter, timeYear2);
+            _sut.ReturnScooter(_testScooter, timeYear2 + timeDelta);
+            _sut.RentScooter(_testScooter, timeYear3);
+            _sut.ReturnScooter(_testScooter, timeYear3 + timeDelta);
+            var actualScooterCount = _sut.RentalHistory(null).Count;
 
             Assert.Equal(expectedScooterCount, actualScooterCount);
         }
@@ -118,14 +118,14 @@ namespace ScooterRental.Test
             var timeDelta = new TimeSpan(0, 40, 0);
             var expectedEntryCount = 1;
 
-            _testService.RentScooter(_testScooter, timeYear1);
-            _testService.ReturnScooter(_testScooter, timeYear1 + timeDelta);
-            _testService.RentScooter(_testScooter, timeYear2);
-            _testService.ReturnScooter(_testScooter, timeYear2 + timeDelta);
-            _testService.RentScooter(_testScooter, timeYear3);
-            _testService.ReturnScooter(_testScooter, timeYear3 + timeDelta);
-            var actualEntryCount = _testService.RentalHistory(rentalYear1).Count;
-            var actualEntryYear = _testService.RentalHistory(rentalYear1)[0].EndTime.Year;
+            _sut.RentScooter(_testScooter, timeYear1);
+            _sut.ReturnScooter(_testScooter, timeYear1 + timeDelta);
+            _sut.RentScooter(_testScooter, timeYear2);
+            _sut.ReturnScooter(_testScooter, timeYear2 + timeDelta);
+            _sut.RentScooter(_testScooter, timeYear3);
+            _sut.ReturnScooter(_testScooter, timeYear3 + timeDelta);
+            var actualEntryCount = _sut.RentalHistory(rentalYear1).Count;
+            var actualEntryYear = _sut.RentalHistory(rentalYear1)[0].EndTime.Year;
 
             Assert.Equal(expectedEntryCount, actualEntryCount);
             Assert.Equal(rentalYear1, actualEntryYear);
