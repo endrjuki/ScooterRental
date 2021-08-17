@@ -1,38 +1,38 @@
 using System;
 using System.Collections.Generic;
+using AutoFixture;
 using ScooterRental.Exceptions;
 using Xunit;
-using Moq;
+using NSubstitute;
 
 namespace ScooterRental.Test
 {
-    
-    public class ScooterRentalCompanyTests : ITimeService
+
+    public class ScooterRentalCompanyTests
     {
-        private IScooterService _mockScooterService;
+        private IRentalCompany _sut;
+        private IScooterService _scooterService = Substitute.For<IScooterService>();
+        private IDateTimeProvider _dateTimeProvider = Substitute.For<IDateTimeProvider>();
+        private IRentalService _rentalService = Substitute.For<IRentalService>();
+        private IFixture _fixture = new Fixture();
+
         ScooterRentalCompanyTests()
         {
-            _mockScooterService = new MockScooterService();
+            _sut = new ScooterRentalCompany("testCompany", _dateTimeProvider, _scooterService, _rentalService);
         }
-        
-        [Fact]
-        public void StartRent_()
-        {
-            string scooterId = "1";
-            var scooter = _mockScooterService.GetScooterById(scooterId);
 
-        }
-        
-        [Fact]
+
+        [Theory]
+        [InlineData()]
         public void EndRent()
         {
-            
+
         }
 
         [Fact]
         public void CalculateIncome()
         {
-            
+
         }
 
         public DateTime Now(DateTime time)
@@ -40,27 +40,9 @@ namespace ScooterRental.Test
             return time;
         }
     }
-    
-    public class MockScooterService : IScooterService
+
+    class MockDateTimeProvider : IDateTimeProvider
     {
-        public void AddScooter(string id, decimal pricePerMinute)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveScooter(string id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IList<Scooter> GetScooters()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Scooter GetScooterById(string scooterId)
-        {
-            return new Scooter(scooterId, 0.2m);
-        }
+        public DateTime DateTimeNow { get; }
     }
 }

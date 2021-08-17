@@ -1,38 +1,57 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ScooterRental
 {
-    public class ScooterRentalCompany : IRentalCompany, ITimeService
+    public class ScooterRentalCompany : IRentalCompany
     {
         private string _name;
-        private IScooterService _fleet;
+        private IDateTimeProvider _dateTimeProvider;
+        private IScooterService _scooterService;
         private IRentalService _rentalService;
-        private ITimeService _time;
         public string Name => _name;
 
-        public ScooterRentalCompany(string name)
+        public ScooterRentalCompany(
+            string name,
+            IDateTimeProvider dateTimeProvider,
+            IScooterService scooterService,
+            IRentalService rentalService)
         {
             _name = name;
+            _dateTimeProvider = dateTimeProvider;
+            _scooterService = scooterService;
+            _rentalService = rentalService;
         }
 
         public void StartRent(string id)
         {
-            throw new System.NotImplementedException();
+            var scooter = _scooterService.GetScooterById(id);
+            _rentalService.RentScooter(scooter, _dateTimeProvider.DateTimeNow);
         }
 
         public decimal EndRent(string id)
         {
-            throw new System.NotImplementedException();
+            var scooter = _scooterService.GetScooterById(id);
+            int rentalDuration = _rentalService.ReturnScooter(scooter, _dateTimeProvider.DateTimeNow);
+            return rentalDuration * scooter.PricePerMinute;
         }
 
         public decimal CalculateIncome(int? year, bool includeNotCompletedRentals)
         {
-            throw new System.NotImplementedException();
-        }
-        public DateTime Now(DateTime time)
-        {
-            return DateTime.Now;
+            decimal incomeFromActiveRentals = 0;
+            if (includeNotCompletedRentals)
+            {
+                incomeFromActiveRentals = _rentalService.CurrentActiveRentals()
+                                 .Aggregate(0m, (income, entry) =>
+                                      income + entry.RentalDuration(_dateTimeProvider.DateTimeNow).Minutes * entry.PricePerMinute);
+            }
+
+            decimal incomeFromCompleteRentals = _rentalService.RentalHistory(year)
+                .Aggregate(0m, (income, entry) =>
+                    income + entry.RentalDuration(_dateTimeProvider.DateTimeNow).Minutes * entry.PricePerMinute);
+
+            return incomeFromActiveRentals + incomeFromCompleteRentals;
         }
     }
 }

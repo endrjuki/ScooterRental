@@ -3,9 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace ScooterRental
 {
-    public interface ITimeService
+    public interface IDateTimeProvider
     {
-        DateTime Now(DateTime time);
-
+        public DateTime DateTimeNow { get; }
     }
 }

@@ -6,18 +6,17 @@ namespace ScooterRental
     {
         private string _id;
         private decimal _pricePerMinute;
-        private decimal _totalCost;
         private DateTime _startTime;
         private DateTime _endTime;
 
-        public decimal Cost => _totalCost;
         public string Id => _id;
         public decimal PricePerMinute => _pricePerMinute;
         public DateTime StartTime => _startTime;
         public DateTime EndTime => _endTime;
-        
-        public RentalTime(decimal pricePerMinute, DateTime startTime)
+
+        public RentalTime(string scooterId, decimal pricePerMinute, DateTime startTime)
         {
+            _id = scooterId;
             _pricePerMinute = pricePerMinute;
             _startTime = startTime;
         }
@@ -25,12 +24,11 @@ namespace ScooterRental
         public void End(DateTime endTime)
         {
             _endTime = endTime;
-            _totalCost = (endTime - _startTime).Minutes * _pricePerMinute;
         }
 
-        public decimal CurrentCost(DateTime currentTime)
+        public TimeSpan RentalDuration(DateTime currentTime)
         {
-            return _totalCost = (currentTime - _startTime).Minutes * _pricePerMinute;
+            return currentTime - _startTime;
         }
     }
 }
