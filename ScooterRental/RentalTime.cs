@@ -9,10 +9,10 @@ namespace ScooterRental
         private DateTime _startTime;
         private DateTime _endTime;
 
-        public string Id => _id;
-        public decimal PricePerMinute => _pricePerMinute;
-        public DateTime StartTime => _startTime;
-        public DateTime EndTime => _endTime;
+        public virtual string Id => _id;
+        public virtual decimal PricePerMinute => _pricePerMinute;
+        public virtual DateTime StartTime => _startTime;
+        public virtual DateTime EndTime => _endTime;
 
         public RentalTime(string scooterId, decimal pricePerMinute, DateTime startTime)
         {
@@ -28,7 +28,12 @@ namespace ScooterRental
 
         public TimeSpan RentalDuration(DateTime currentTime)
         {
-            return currentTime - _startTime;
+            return currentTime - StartTime;
+        }
+
+        public TimeSpan RentalDuration()
+        {
+            return EndTime - StartTime;
         }
     }
 }

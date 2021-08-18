@@ -1,6 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using AutoFixture;
+using Moq;
 using ScooterRental.Exceptions;
 using Xunit;
 using NSubstitute;
@@ -23,7 +26,7 @@ namespace ScooterRental.Test
         }
 
         [Fact]
-        public void StartRent_ValidId_StartsRental()
+        public void StartRent_ValidId_InvokesMethodsWithProperArguments()
         {
             // Arrange
             var testScooter = _fixture.Build<Scooter>().Create();
@@ -34,23 +37,83 @@ namespace ScooterRental.Test
             _sut.StartRent(testScooter.Id);
 
             // Assert
-            _scooterService.Received(1).GetScooterById(Arg.Is<string>(s => s == testScooter.Id));
+            _scooterService.Received(1).GetScooterById(Arg.Is<String>(s => s == testScooter.Id));
             _rentalService.Received(1).RentScooter(Arg.Is<Scooter>(s => s.Id == testScooter.Id &&
                                                                         s.PricePerMinute == testScooter.PricePerMinute),
                 Arg.Is<DateTime>(time => time == _dateTimeProvider.DateTimeNow));
         }
 
         [Fact]
-        public void EndRent()
+        public void EndRent_ValidId_ReturnsDecimal()
         {
+            // Arrange
+            var testScooter = _fixture.Build<Scooter>().Create();
+            _scooterService.GetScooterById(testScooter.Id).Returns(testScooter);
+            _dateTimeProvider.DateTimeNow.Returns((new DateTime(2021, 1, 1, 0, 0, 0)));
+            _rentalService.ReturnScooter(testScooter, _dateTimeProvider.DateTimeNow).Returns(40);
+            var expectedIncome = 40 * testScooter.PricePerMinute;
 
+            // Action
+            var actualIncome = _sut.EndRent(testScooter.Id);
+
+            // Assert
+            _scooterService.Received(1).GetScooterById(Arg.Is<String>(s => s == testScooter.Id));
+            _rentalService.Received(1).ReturnScooter(Arg.Is<Scooter>(s => s.Id == testScooter.Id &&
+                                                                          s.PricePerMinute == testScooter.PricePerMinute),
+                Arg.Is<DateTime>(time => time == _dateTimeProvider.DateTimeNow));
+
+            Assert.Equal(expectedIncome, actualIncome);
         }
 
         [Fact]
-        public void CalculateIncome()
+        public void CalculateIncome_ActiveRentalsAndCompleteRentals_ReturnsDecimal()
         {
+            //Arrange
+            var testYear = 2021;
+            var id = "testId";
+            var startTime = new DateTime(testYear, 8, 18, 0, 0, 0);
+            var endTime = new DateTime(testYear, 8, 18, 2, 10, 0);
+            var pricePerMinute = 0.20m;
 
+            var mockedCompleteEntry = new Mock<RentalTime>(id, pricePerMinute, startTime);
+            mockedCompleteEntry.SetupGet(rt => rt.StartTime).Returns(startTime);
+            mockedCompleteEntry.SetupGet(rt => rt.EndTime).Returns(endTime);
+            mockedCompleteEntry.SetupGet(rt => rt.PricePerMinute).Returns(pricePerMinute);
+
+            var mockedInProgressEntry = new Mock<RentalTime>(id, pricePerMinute, startTime);
+            mockedInProgressEntry.SetupGet(rt => rt.StartTime).Returns(startTime);
+            mockedInProgressEntry.SetupGet(rt => rt.PricePerMinute).Returns(pricePerMinute);
+
+
+            var activeRentalList = new List<RentalTime>()
+            {
+
+                //mockedInProgressEntry.Object,
+                //mockedInProgressEntry.Object
+            };
+
+            var CompleteRentalList = new List<RentalTime>()
+            {
+                //mockedCompleteEntry.Object,
+                mockedCompleteEntry.Object
+            };
+
+            _rentalService.CurrentActiveRentals().Returns(activeRentalList);
+            _rentalService.RentalHistory(testYear).Returns(CompleteRentalList);
+            _dateTimeProvider.DateTimeNow.Returns(new DateTime(2021, 8, 18, 3 , 0, 0, 0));
+            //_rentalService.CurrentActiveRentals().Returns(CompleteRentalList);
+            var expectedIncome = 62m;
+
+            //Action
+            var actualIncome = _sut.CalculateIncome(null, true);
+
+            //Assert
+            Assert.Equal(expectedIncome, actualIncome);
         }
+
+
+
+
 
     }
 }

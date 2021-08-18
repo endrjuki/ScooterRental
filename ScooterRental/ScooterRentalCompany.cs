@@ -39,17 +39,18 @@ namespace ScooterRental
 
         public decimal CalculateIncome(int? year, bool includeNotCompletedRentals)
         {
+
             decimal incomeFromActiveRentals = 0;
             if (includeNotCompletedRentals)
             {
                 incomeFromActiveRentals = _rentalService.CurrentActiveRentals()
                                  .Aggregate(0m, (income, entry) =>
-                                      income + entry.RentalDuration(_dateTimeProvider.DateTimeNow).Minutes * entry.PricePerMinute);
+                                      income + (decimal)entry.RentalDuration(_dateTimeProvider.DateTimeNow).TotalMinutes * entry.PricePerMinute);
             }
 
             decimal incomeFromCompleteRentals = _rentalService.RentalHistory(year)
                 .Aggregate(0m, (income, entry) =>
-                    income + entry.RentalDuration(_dateTimeProvider.DateTimeNow).Minutes * entry.PricePerMinute);
+                    income + (decimal)entry.RentalDuration().TotalMinutes * entry.PricePerMinute);
 
             return incomeFromActiveRentals + incomeFromCompleteRentals;
         }
