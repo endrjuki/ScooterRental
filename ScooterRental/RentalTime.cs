@@ -1,4 +1,5 @@
 using System;
+using ScooterRental.Exceptions;
 
 namespace ScooterRental
 {
@@ -23,11 +24,21 @@ namespace ScooterRental
 
         public void End(DateTime endTime)
         {
+            if (endTime < StartTime)
+            {
+                throw new EndTimeBeforeStartTimeException("EndTime cannot be before StartTime");
+            }
+
             _endTime = endTime;
         }
 
         public TimeSpan RentalDuration(DateTime currentTime)
         {
+            if (currentTime < StartTime)
+            {
+                throw new EndTimeBeforeStartTimeException("EndTime cannot be before StartTime");
+            }
+
             return currentTime - StartTime;
         }
 

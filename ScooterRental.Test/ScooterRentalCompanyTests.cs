@@ -11,7 +11,6 @@ using NSubstitute.ReceivedExtensions;
 
 namespace ScooterRental.Test
 {
-
     public class ScooterRentalCompanyTests
     {
         private IRentalCompany _sut;
@@ -23,6 +22,19 @@ namespace ScooterRental.Test
         public ScooterRentalCompanyTests()
         {
             _sut = new ScooterRentalCompany("testCompany", _dateTimeProvider, _scooterService, _rentalService);
+        }
+
+        [Fact]
+        public void Name_ReturnsCompanyName()
+        {
+            // Arrange
+            var expected = "testCompany";
+
+            // Action
+            var actual = _sut.Name;
+
+            // Assert
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -87,33 +99,72 @@ namespace ScooterRental.Test
 
             var activeRentalList = new List<RentalTime>()
             {
-
-                //mockedInProgressEntry.Object,
-                //mockedInProgressEntry.Object
+                mockedInProgressEntry.Object,
+                mockedInProgressEntry.Object,
+                mockedInProgressEntry.Object
             };
 
-            var CompleteRentalList = new List<RentalTime>()
+            var completeRentalList = new List<RentalTime>()
             {
-                //mockedCompleteEntry.Object,
+                mockedCompleteEntry.Object,
                 mockedCompleteEntry.Object
             };
 
             _rentalService.CurrentActiveRentals().Returns(activeRentalList);
-            _rentalService.RentalHistory(testYear).Returns(CompleteRentalList);
+            _rentalService.RentalHistory(testYear).Returns(completeRentalList);
             _dateTimeProvider.DateTimeNow.Returns(new DateTime(2021, 8, 18, 3 , 0, 0, 0));
-            //_rentalService.CurrentActiveRentals().Returns(CompleteRentalList);
-            var expectedIncome = 62m;
+            var expectedIncome = 160m;
 
             //Action
-            var actualIncome = _sut.CalculateIncome(null, true);
+            var actualIncome = _sut.CalculateIncome(testYear, true);
 
             //Assert
             Assert.Equal(expectedIncome, actualIncome);
         }
 
+        [Fact]
+        public void CalculateIncome_OnlyCompleteRentals_ReturnsDecimal()
+        {
+            //Arrange
+            var testYear = 2021;
+            var id = "testId";
+            var startTime = new DateTime(testYear, 8, 18, 0, 0, 0);
+            var endTime = new DateTime(testYear, 8, 18, 2, 10, 0);
+            var pricePerMinute = 0.20m;
+
+            var mockedCompleteEntry = new Mock<RentalTime>(id, pricePerMinute, startTime);
+            mockedCompleteEntry.SetupGet(rt => rt.StartTime).Returns(startTime);
+            mockedCompleteEntry.SetupGet(rt => rt.EndTime).Returns(endTime);
+            mockedCompleteEntry.SetupGet(rt => rt.PricePerMinute).Returns(pricePerMinute);
+
+            var mockedInProgressEntry = new Mock<RentalTime>(id, pricePerMinute, startTime);
+            mockedInProgressEntry.SetupGet(rt => rt.StartTime).Returns(startTime);
+            mockedInProgressEntry.SetupGet(rt => rt.PricePerMinute).Returns(pricePerMinute);
 
 
+            var activeRentalList = new List<RentalTime>()
+            {
+                mockedInProgressEntry.Object,
+                mockedInProgressEntry.Object,
+                mockedInProgressEntry.Object
+            };
 
+            var completeRentalList = new List<RentalTime>()
+            {
+                mockedCompleteEntry.Object,
+                mockedCompleteEntry.Object
+            };
 
+            _rentalService.CurrentActiveRentals().Returns(activeRentalList);
+            _rentalService.RentalHistory(testYear).Returns(completeRentalList);
+            _dateTimeProvider.DateTimeNow.Returns(new DateTime(2021, 8, 18, 3 , 0, 0, 0));
+            var expectedIncome = 52m;
+
+            //Action
+            var actualIncome = _sut.CalculateIncome(testYear, false);
+
+            //Assert
+            Assert.Equal(expectedIncome, actualIncome);
+        }
     }
 }

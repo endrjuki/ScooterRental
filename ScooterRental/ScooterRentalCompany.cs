@@ -48,7 +48,9 @@ namespace ScooterRental
                                       income + (decimal)entry.RentalDuration(_dateTimeProvider.DateTimeNow).TotalMinutes * entry.PricePerMinute);
             }
 
-            decimal incomeFromCompleteRentals = _rentalService.RentalHistory(year)
+            decimal incomeFromCompleteRentals = 0;
+            var test1 = _rentalService.RentalHistory(year);
+            incomeFromCompleteRentals = _rentalService.RentalHistory(year)
                 .Aggregate(0m, (income, entry) =>
                     income + (decimal)entry.RentalDuration().TotalMinutes * entry.PricePerMinute);
 
