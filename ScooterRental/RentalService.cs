@@ -45,14 +45,14 @@ namespace ScooterRental
         {
             if (year is null)
             {
-                return _completeRentals;
+                return _completeRentals.ToList();
             }
             return _completeRentals.Where(entry => entry.EndTime.Year == year).ToList();
         }
 
         public IList<RentalTime> CurrentActiveRentals()
         {
-            return _activeRentals;
+            return _activeRentals.ToList();
         }
     }
 }

@@ -32,6 +32,22 @@ namespace ScooterRental.Test
         }
 
         [Fact]
+        public void AddScooter_NegativePricePerMinute_NegativePricePerMinuteException()
+        {
+            // Arrange
+            string id = "testScooter";
+            decimal pricePerMinute = -0.22m;
+            var expectedMessage = "Price per minute must be larger than 0.";
+
+            // Action
+            Action act = () => _sut.AddScooter(id, pricePerMinute);
+
+            // Assert
+            NegativePricePerMinuteException exception = Assert.Throws<NegativePricePerMinuteException>(act);
+            Assert.Equal(expectedMessage, exception.Message);
+        }
+
+        [Fact]
         public void RemoveScooter_ValidId_RemovesScooterFromFleet()
         {
             // Arrange
