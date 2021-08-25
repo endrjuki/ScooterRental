@@ -25,7 +25,7 @@ namespace ScooterRental.Test
             var testTimeNow = new DateTime(2021, 8, 13, 0, 0, 0);
             var expectedRentalCount = 1;
 
-            // Action
+            // Act
             _sut.RentScooter(_mockScooter, testTimeNow);
             var actualRentalCount = _sut.CurrentActiveRentals().Count;
             var actualRentalScooter = _sut.CurrentActiveRentals()[0];
@@ -35,9 +35,6 @@ namespace ScooterRental.Test
 
             // Assert
             Assert.Equal(expectedRentalCount, actualRentalCount);
-            Assert.Equal(_mockScooter.Id, actualId);
-            Assert.Equal(_mockScooter.PricePerMinute, actualPpm);
-            Assert.Equal(testTimeNow, actualRentStartTime);
         }
 
         [Fact]
@@ -48,7 +45,7 @@ namespace ScooterRental.Test
             _mockScooter.IsRented = true;
             var expectedMessage = "Scooter with this ID is being currently rented.";
 
-            // Action
+            // Act
             Action act = () => _sut.RentScooter(_mockScooter, testTimeNow);
 
             // Assert
@@ -63,7 +60,7 @@ namespace ScooterRental.Test
             var testTimeNow = new DateTime(2021, 8, 13, 0, 0, 0);
             var expectedMessage = "Rental entry with this ID doesn't exist";
 
-            // Action
+            // Act
             Action act = () => _sut.ReturnScooter(_mockScooter, testTimeNow);
 
             // Assert
@@ -81,7 +78,7 @@ namespace ScooterRental.Test
             var expectedRentalHistoryCount = 1;
             _sut.RentScooter(_mockScooter, rentalStartTime);
 
-            // Action
+            // Act
             _sut.ReturnScooter(_mockScooter, rentalEndTime);
             var actualRentalHistoryCount = _sut.RentalHistory(rentalYear).Count;
             var actualRentalTime = _sut.RentalHistory(rentalYear)[0];
@@ -113,7 +110,7 @@ namespace ScooterRental.Test
         }
 
         [Fact]
-        public void RentalHistory_YearNull_ReturnListOfAllRentalEntries()
+        public void RentalHistory_NoYearGiven_ReturnListOfAllRentalEntries()
         {
             // Arrange
             var rentalYear1 = 2019;
@@ -125,14 +122,14 @@ namespace ScooterRental.Test
             var timeDelta = new TimeSpan(0, 40, 0);
             var expectedScooterCount = 3;
 
-            // Action
+            // Act
             _sut.RentScooter(_mockScooter, timeYear1);
             _sut.ReturnScooter(_mockScooter, timeYear1 + timeDelta);
             _sut.RentScooter(_mockScooter, timeYear2);
             _sut.ReturnScooter(_mockScooter, timeYear2 + timeDelta);
             _sut.RentScooter(_mockScooter, timeYear3);
             _sut.ReturnScooter(_mockScooter, timeYear3 + timeDelta);
-            var actualScooterCount = _sut.RentalHistory(null).Count;
+            var actualScooterCount = _sut.RentalHistory().Count;
 
             // Assert
             Assert.Equal(expectedScooterCount, actualScooterCount);
@@ -151,7 +148,7 @@ namespace ScooterRental.Test
             var timeDelta = new TimeSpan(0, 40, 0);
             var expectedEntryCount = 1;
 
-            // Action
+            // Act
             _sut.RentScooter(_mockScooter, timeYear1);
             _sut.ReturnScooter(_mockScooter, timeYear1 + timeDelta);
             _sut.RentScooter(_mockScooter, timeYear2);

@@ -14,7 +14,7 @@ namespace ScooterRental.Test
         }
 
         [Fact]
-        public void End_GoodDateTime_DateTimeAssignedToProperty()
+        public void End_ValidDateTime_DateTimeAssignedToProperty()
         {
             // Arrange
             var endTime = new DateTime(2021, 8, 8, 1, 0, 0);

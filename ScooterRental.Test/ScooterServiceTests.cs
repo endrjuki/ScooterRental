@@ -22,7 +22,7 @@ namespace ScooterRental.Test
             string id = "testScooter";
             decimal pricePerMinute = 0.22m;
 
-            // Action
+            // Act
             _sut.AddScooter(id, pricePerMinute);
             var actual = _sut.GetScooterById(id);
 
@@ -39,7 +39,7 @@ namespace ScooterRental.Test
             decimal pricePerMinute = -0.22m;
             var expectedMessage = "Price per minute must be larger than 0.";
 
-            // Action
+            // Act
             Action act = () => _sut.AddScooter(id, pricePerMinute);
 
             // Assert
@@ -56,7 +56,7 @@ namespace ScooterRental.Test
             var expectedInitialScooterCount = 1;
             var expectedPostScooterCount = 0;
 
-            // Action
+            // Act
             _sut.AddScooter(id, pricePerMinute);
             var actualInitialScooterCount = _sut.GetScooters().Count;
             _sut.RemoveScooter(id);
@@ -75,7 +75,7 @@ namespace ScooterRental.Test
             string id = "testScooter";
             decimal pricePerMinute = 0.22m;
 
-            // Action
+            // Act
             _sut.AddScooter(id, pricePerMinute);
             _sut.GetScooterById(id).IsRented = true;
             Action act = () => _sut.RemoveScooter(id);
@@ -91,7 +91,7 @@ namespace ScooterRental.Test
             // Arrange
             string id = "testScooter";
 
-            // Action
+            // Act
             Action act = () => _sut.RemoveScooter(id);
 
             // Assert
@@ -109,7 +109,7 @@ namespace ScooterRental.Test
             decimal pricePerMinute = 0.20m;
             var expected = 3;
 
-            // Action
+            // Act
             _sut.AddScooter(id1, pricePerMinute);
             _sut.AddScooter(id2, pricePerMinute);
             _sut.AddScooter(id3, pricePerMinute);
@@ -127,7 +127,7 @@ namespace ScooterRental.Test
             decimal pricePerMinute = 0.20m;
             var expected = new Scooter(id, pricePerMinute);
 
-            // Action
+            // Act
             _sut.AddScooter(id, pricePerMinute);
             var actual = _sut.GetScooterById(id);
 
@@ -143,7 +143,7 @@ namespace ScooterRental.Test
             // Arrange
             string id = "testScooter";
 
-            // Action
+            // Act
             Action act = () => _sut.GetScooterById(id);
 
             // Assert

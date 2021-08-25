@@ -41,7 +41,7 @@ namespace ScooterRental
             return rentalEntry.RentalDuration(time).Minutes;
         }
 
-        public IList<RentalTime> RentalHistory(int? year)
+        public IList<RentalTime> RentalHistory(int? year = null)
         {
             if (year is null)
             {

@@ -30,7 +30,7 @@ namespace ScooterRental.Test
             // Arrange
             var expected = "testCompany";
 
-            // Action
+            // Act
             var actual = _sut.Name;
 
             // Assert
@@ -45,7 +45,7 @@ namespace ScooterRental.Test
             _scooterService.GetScooterById(testScooter.Id).Returns(testScooter);
             _dateTimeProvider.DateTimeNow.Returns((new DateTime(2021, 1, 1, 0, 0, 0)));
 
-            // Action
+            // Act
             _sut.StartRent(testScooter.Id);
 
             // Assert
@@ -65,7 +65,7 @@ namespace ScooterRental.Test
             _rentalService.ReturnScooter(testScooter, _dateTimeProvider.DateTimeNow).Returns(40);
             var expectedIncome = 40 * testScooter.PricePerMinute;
 
-            // Action
+            // Act
             var actualIncome = _sut.EndRent(testScooter.Id);
 
             // Assert
