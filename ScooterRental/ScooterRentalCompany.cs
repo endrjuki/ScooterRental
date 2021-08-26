@@ -1,51 +1,59 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ScooterRental
 {
-    public class ScooterRentalCompany : IRentalCompany, IScooterService
+    public class ScooterRentalCompany : IRentalCompany
     {
         private string _name;
-        private List<Scooter> _fleet;
+        private IDateTimeProvider _dateTimeProvider;
+        private IScooterService _scooterService;
+        private IRentalService _rentalService;
         public string Name => _name;
 
-        public ScooterRentalCompany(string name)
+        public ScooterRentalCompany(
+            string name,
+            IDateTimeProvider dateTimeProvider,
+            IScooterService scooterService,
+            IRentalService rentalService)
         {
             _name = name;
+            _dateTimeProvider = dateTimeProvider;
+            _scooterService = scooterService;
+            _rentalService = rentalService;
         }
 
         public void StartRent(string id)
         {
-            throw new System.NotImplementedException();
+            var scooter = _scooterService.GetScooterById(id);
+            _rentalService.RentScooter(scooter, _dateTimeProvider.DateTimeNow);
         }
 
         public decimal EndRent(string id)
         {
-            throw new System.NotImplementedException();
+            var scooter = _scooterService.GetScooterById(id);
+            int rentalDuration = _rentalService.ReturnScooter(scooter, _dateTimeProvider.DateTimeNow);
+            return rentalDuration * scooter.PricePerMinute;
         }
 
         public decimal CalculateIncome(int? year, bool includeNotCompletedRentals)
         {
-            throw new System.NotImplementedException();
-        }
 
-        public void AddScooter(string id, decimal pricePerMinute)
-        {
-            throw new System.NotImplementedException();
-        }
+            decimal incomeFromActiveRentals = 0;
+            if (includeNotCompletedRentals)
+            {
+                incomeFromActiveRentals = _rentalService.CurrentActiveRentals()
+                                 .Aggregate(0m, (income, entry) =>
+                                      income + (decimal)entry.RentalDuration(_dateTimeProvider.DateTimeNow).TotalMinutes * entry.PricePerMinute);
+            }
 
-        public void RemoveScooter(string id)
-        {
-            throw new System.NotImplementedException();
-        }
+            decimal incomeFromCompleteRentals = 0;
+            incomeFromCompleteRentals = _rentalService.RentalHistory(year)
+                .Aggregate(0m, (income, entry) =>
+                    income + (decimal)entry.RentalDuration().TotalMinutes * entry.PricePerMinute);
 
-        public IList<Scooter> GetScooters()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Scooter GetScooterById(string scooterId)
-        {
-            throw new System.NotImplementedException();
+            return incomeFromActiveRentals + incomeFromCompleteRentals;
         }
     }
 }
